@@ -2,11 +2,14 @@ package com.journaldev.okhttp;
 
 /**
  * Created by Skander Jabouzi on 2018-01-11.
- * Manulife
- * skander_jabouzi@manulife.com
  */
 
+import com.google.gson.JsonObject;
+
+import java.util.Map;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -27,4 +30,10 @@ public interface NetworkApi {
     @FormUrlEncoded
     @POST("/api/login")
     Call<LoginToken> Login(@Field("email") String email, @Field("password") String password);
+
+    @POST("/api/login")
+    Call<LoginToken> Login2(@Body JsonObject body);
+
+    @POST("/api/login")
+    Call<LoginToken> Login3(@Body Map<String, String> params);
 }

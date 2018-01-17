@@ -11,8 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,6 +65,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.asynchronousPost:
                 Login("peter@klaven", "cityslicka");
+                Login2();
+                Login3();
                 break;
         }
     }
@@ -124,6 +130,56 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 } else {
                     LoginToken token = response.body();
                     txtString.setText(token.getToken());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginToken> call, Throwable t) {
+                txtString.setText("Parsing Failed");
+            }
+        });
+    }
+
+    public void Login2() {
+
+        String json = "{\"email\":\"peter@klaven\",\"password\": \"cityslicka\"}";
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jo = (JsonObject)jsonParser.parse(json);
+        NetworkApi networkApi = ApiUtils.getNetworkApi();
+        networkApi.Login2(jo).enqueue(new Callback<LoginToken>() {
+            @Override
+            public void onResponse(Call<LoginToken> call, Response<LoginToken> response) {
+                Log.e("RESP", new GsonBuilder().setPrettyPrinting().create().toJson(response));
+                if (response.code() != 200) {
+                    txtString.setText("ERROR: " + String.valueOf(response.code()));
+                } else {
+                    LoginToken token = response.body();
+                    txtString.append(" - " + token.getToken());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginToken> call, Throwable t) {
+                txtString.setText("Parsing Failed");
+            }
+        });
+    }
+
+    public void Login3() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("email", "peter@klaven");
+        params.put("password", "cityslicka");
+        NetworkApi networkApi = ApiUtils.getNetworkApi();
+        networkApi.Login3(params).enqueue(new Callback<LoginToken>() {
+            @Override
+            public void onResponse(Call<LoginToken> call, Response<LoginToken> response) {
+                Log.e("RESP", new GsonBuilder().setPrettyPrinting().create().toJson(response));
+                if (response.code() != 200) {
+                    txtString.setText("ERROR: " + String.valueOf(response.code()));
+                } else {
+                    LoginToken token = response.body();
+                    txtString.append(" + " + token.getToken());
                 }
             }
 
